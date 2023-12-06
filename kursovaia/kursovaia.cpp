@@ -6,10 +6,10 @@
 
 using namespace std;
 
-int N;
-int** arrayMatrix[3];
-int* arrayEnd = new int[N * N * 2];
-int amount;
+int N; // размерность
+int** arrayMatrix[3]; // массив матриц
+int* arrayEnd = new int[N * N * 2]; // массив для сбора совпавших элементов
+int amount; // длина массива
 
 int** matrixCreate() { // метод создания матрицы, заполнение её нулями
     int** matrix = new int* [N];
@@ -39,19 +39,20 @@ void matrixPrint(int** matrix) { // вывод матрицы на экран п
 void matrixChangeElements(int** a) { // метод смены значения элемента матрицы
     cout << "Enter index of row and column\n";
     int row, column, value;
-    cin >> row >> column;
+    cin >> row >> column; // вводим индекс строки и индекс столбца
     while (true) {
-        if (row >= N || column >= N) {
-            cout << "Something wrong";
+        if (row >= N || column >= N) { // проверка на существующие значения строки и столбца
+            cout << "Something wrong"; // вывод предупреждения
             cin >> row >> column;
         }
         else {
-            break;
+            break; // выход из цикла
         }
     }
-    cout << "Enter a new value\n";
+    cout << "Enter a new value\n"; // ввод нового значения
     cin >> value;
-    a[row][column] = value;
+    a[row][column] = value; // присваиваем это значение
+
 }
 
 int** matrixCopy(int** a) { // метод копирования значения матрицы
@@ -62,10 +63,10 @@ int** matrixCopy(int** a) { // метод копирования значени�
     return result;
 }
 
-int* matrixComparison() {
-    amount = 0;
-    int temp;
-    for (int i = 0; i < N; i++) {
+int* matrixComparison() { // поиск совпавших элементов
+    amount = 0; // присваиваем глобальной переменной значение
+    int temp; // дополнительная переменная для сортировки массива
+    for (int i = 0; i < N; i++) { // цикл ищущий совпадение элементов матрицы А с С
         for (int j = 0; j < N; j++) {
             int element = arrayMatrix[0][i][j];
             for (int k = 0; k < N; k++) {
@@ -75,7 +76,7 @@ int* matrixComparison() {
             }
         }
     }
-    for (int i = 0; i < N; i++) {
+    for (int i = 0; i < N; i++) { // цикл ищущий совпадение элементов матрицы В с С
         for (int j = 0; j < N; j++) {
             int element = arrayMatrix[1][i][j];
             for (int k = 0; k < N; k++) {
@@ -85,7 +86,7 @@ int* matrixComparison() {
             }
         }
     }
-    for (int i = 0; i < amount; i++) {
+    for (int i = 0; i < amount; i++) { // соптировка пузырьком
         for (int j = 0; j < amount - 1; j++)
             if (arrayEnd[j] > arrayEnd[j + 1]) {
                 temp = arrayEnd[j];
@@ -93,7 +94,17 @@ int* matrixComparison() {
                 arrayEnd[j + 1] = temp;
         }
     }
-    cout << "End: ";
+    for (int i = 0; i < amount; i++) { //убирает дубликаты
+        for (int j = i + 1; j < amount; j++) {
+            if (arrayEnd[i] == arrayEnd[j]) {
+                for (int k = j; k < amount - 1; k++) {
+                    arrayEnd[k] = arrayEnd[k + 1];
+                }
+                amount--;
+            }
+        }
+    }
+    cout << "End: ";// вывод в консоль полученного результата
     for (int i = 0; i < amount; i++) {
         cout << arrayEnd[i] << " ";
     }
@@ -101,7 +112,7 @@ int* matrixComparison() {
 }
 
 
-void editMatrix() {
+void editMatrix() { // метод редактирование
     cout << "\nWhat matrix do u want to edit?\n" <<
         "1 - Matrix A" <<
         "\n2 - Matrix B" <<
@@ -184,8 +195,8 @@ int outputInFile() {
     }
 }
 
-void outputMatrix() {
-    cout << "The first matrix: \n";
+void outputMatrix() { // вывод в консоль
+    cout << "The first matrix: \n"; // вывод первой матрицы
     matrixPrint(arrayMatrix[0]);
     cout << "\nThe second matrix: \n"; // вывод второй матрицы
     matrixPrint(arrayMatrix[1]);
@@ -195,7 +206,7 @@ void outputMatrix() {
     char tag;
     cin >> tag;
     if (tag == 'Y') {
-        outputInFile();
+        outputInFile(); // вывод в файл
     }
 }
 
@@ -215,24 +226,28 @@ int chooseMethod() { // выбор пользователя
     cin >> index; // ввод индекса пользователем
     switch (index) {
     case 1: 
-        matrixEnter(); break;
+        matrixEnter(); break; // метод ввода матрицы
     case 2: 
-        editMatrix(); break;
+        editMatrix(); break; // метод редактирование матрицы
     case 3: 
-        outputMatrix(); break;
+        outputMatrix(); break; // вывод матриц
     case 4: 
-        matrixComparison(); break;
+        matrixComparison(); break; // сравнение матриц
     case 5:
-        return -1;
+        return -1; // выход
     }
     return 0;
 }
 
-int main() { // вызов метода меню и выбора пользователя
+int main() { // вызов метода меню 
     cout << "\nEnter the dimension of the matrices\n"; // ввод размерности матрицы
     cin >> N;
     cout << "Welcome to matrices calculator!\n";
     while (true) {
-        if (chooseMethod() == -1) break;
+        if (chooseMethod() == -1) {
+            break; // вызов выбора пользователя
+            delete[] arrayEnd;
+            delete[] arrayMatrix;
+        }
     }
 }
